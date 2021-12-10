@@ -1,6 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from control.matlab import *
+import scipy
+from sympy.integrate import odeint
 
 # from scipy import arange
 
@@ -29,3 +31,13 @@ plt.ylabel('Rev[rpm]')
 plt.xlim(0, 3)
 plt.ylim(0, 350)
 plt.show()
+
+import sympy as sym
+from sympy.plotting import plot
+sym.init_printing(use_unicode=True)
+from sympy import sin, cos, tan, log, exp
+
+a, b, c, x, y = sym.symbols("a b c x y")
+expr = x ** a
+integ = sym.Integral(expr, x)
+print(integ)
