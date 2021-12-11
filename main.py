@@ -1,8 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from control.matlab import *
-import scipy
-from sympy.integrate import odeint
+from scipy.integrate import odeint
+import sympy as sym
 
 # from scipy import arange
 
@@ -32,12 +32,18 @@ plt.xlim(0, 3)
 plt.ylim(0, 350)
 plt.show()
 
-import sympy as sym
-from sympy.plotting import plot
-sym.init_printing(use_unicode=True)
-from sympy import sin, cos, tan, log, exp
+def system(y, t):
+    if t < 10 :
+        u = 0
+    else:
+        u = 1
+    dydt = (-y + u) / 5
+    return dydt
 
-a, b, c, x, y = sym.symbols("a b c x y")
-expr = x ** a
-integ = sym.Integral(expr, x)
-print(integ)
+y0 = 0.5
+t = np.arange(0, 40, 0.04)
+y = odeint(system, y0, t)
+
+plt.plot(t, y)
+plt.plot(t, 1 * (t>=10))
+plt.show()
