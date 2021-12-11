@@ -47,3 +47,17 @@ y = odeint(system, y0, t)
 plt.plot(t, y)
 plt.plot(t, 1 * (t>=10))
 plt.show()
+
+Np = [1, 3]
+Dp = [1, 5, 8, 4]
+P = tf(Np, Dp)
+print(P)
+
+Np = [1, 3]
+Dp1 = [1, 1]
+Dp2 = [1, 2]
+P = tf(Np, Dp1) * tf([1], Dp2)**2
+print(P)
+
+P = tf([1], [1, 2, 3])
+print(P)
