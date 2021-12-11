@@ -32,6 +32,8 @@ plt.xlim(0, 3)
 plt.ylim(0, 350)
 plt.show()
 
+# odeint
+
 def system(y, t):
     if t < 10 :
         u = 0
@@ -48,6 +50,8 @@ plt.plot(t, y)
 plt.plot(t, 1 * (t>=10))
 plt.show()
 
+# ラプラス変換
+
 Np = [1, 3]
 Dp = [1, 5, 8, 4]
 P = tf(Np, Dp)
@@ -61,3 +65,23 @@ print(P)
 
 P = tf([1], [1, 2, 3])
 print(P)
+
+# 状態空間モデル
+
+A = '1, 1, 2; 2, 1, 1; 3, 4, 5'
+B = '2; 0; 1'
+C = '1, 1, 0'
+D = 0
+
+P = ss(A, B, C, D)
+print(P)
+
+# システムの結合
+
+S1 = tf([0, 1], [1, 1])
+S2 = tf([1, 1], [1, 1, 1])
+S = series(S1, S2)
+print(S)
+
+S = parallel(S1, S2)
+print(S)
