@@ -1,10 +1,10 @@
 import control
 import numpy as np
 import sympy as sp
+import scipy
 import matplotlib.pyplot as plt
 from control.matlab import *
 from scipy.integrate import odeint
-import sympy as sym
 
 # from scipy import arange
 
@@ -240,4 +240,71 @@ x, t = initial(P, Td, X0)
 
 plt.plot(t, x[:, 0])
 plt.plot(t, x[:, 1])
+plt.show()
+
+# 逆ラプラス変換
+sp.init_printing()
+s = sp.Symbol('s')
+t = sp.Symbol('t', positive=True)
+
+A = np.array([[0, 1], [-4, -5]])
+G = s*sp.eye(2)-A
+exp_At = sp.inverse_laplace_transform(sp.simplify(G.inv()), s, t)
+
+A = np.array([[0, 1], [-4, -5]])
+t = 5
+scipy.linalg.expm(A*t)
+
+# 状態空間モデルの零状態応答
+Td = np.arange(0, 5, 0.01)
+x, t = step(P, Td)
+
+fig, ax = plt.subplots()
+ax.plot(t, x[:, 0])
+ax.plot(t, x[:, 1])
+plt.show()
+
+# 状態空間モデルの時間応答
+Td = np.arange(0, 5, 0.01)
+Ud = 1 * (Td > 0)   #入力関数 u(t)
+X0 = [-0.3, 0.4]
+
+xst, t = step(P, Td)    #零状態応答
+xin, _ = initial(P, Td, X0) #零入力応答
+x, _, _ = lsim(P, Ud, Td, X0)
+
+fig, ax = plt.subplots(1, 2, figsize=(6, 2.3))
+for i in [0, 1]:
+    ax[i].plot(t, x[:, i], label='response')
+    ax[i].plot(t, xst[:, i], ls='--', label='zero state')
+    ax[i].plot(t, xin[:, i], ls='-.', label='zero input')
+
+plot_set(ax[0], 't', '$x_1$')
+plot_set(ax[1], 't', '$x_2$', 'best')
+fig.tight_layout()
+plt.show()
+
+# 練習問題
+Td = np.arange(0, 5, 0.01)
+Ud = 3 * np.sin(5*Td)
+X0 = [0.5, 1]
+
+# 位相面図
+w = 1.5
+Y, X = np.mgrid[-w:w:100j, -w:w:100j]
+
+A = np.array([[0, 1], [-4, 5]])
+s, v = np.linalg.eig(A)
+U = A[0, 0]*X + A[0, 1]*Y
+V = A[1, 0]*X + A[1, 1]*Y
+
+t = np.arange(-1.5, 1.5, 0.01)
+fig, ax = plt.subplots()
+
+if s.imag[0]==0 and s.imag[1]==0:
+    ax.plot(t, (v[1,0]/v[0,0])*t, ls='-')
+    ax.plot(t, (v[1,1]/v[0,1])*t, ls='-')
+
+ax.streamplot(X, Y, U, V, density=0.7, color='k')
+plot_set(ax, '$x_1$', '$x_2$')
 plt.show()
