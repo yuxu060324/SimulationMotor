@@ -1,5 +1,6 @@
 import control
 import numpy as np
+import sympy as sp
 import matplotlib.pyplot as plt
 from control.matlab import *
 from scipy.integrate import odeint
@@ -185,3 +186,58 @@ for i in range(len(K)):
     ax.plot(t, y, ls=next(LS), label='K='+str(K[i]))
 
 plot_set(ax, 't', 'y', 'upper left')
+
+# 2次遅れ系のステップ応答
+zeta, omega_n = 0.4, 5  # 減衰係数と固有角周波数の設定
+
+P = tf([0, omega_n**2], [1, 2*zeta*omega_n, omega_n**2])
+y, t = step(P, np.arange(0, 5, 0.01))
+
+fig, ax = plt.subplots()
+ax.plot(t, y)
+plot_set(ax, 't', 'y')
+plt.show()
+
+# 2次遅れ系のステップ応答(減衰関数)
+fig, ax = plt.subplots()
+LS = linestyle_generator()
+
+zeta = [1, 0.7, 0.4]
+omega_n = [1, 5, 10]
+for i in range(len(zeta)):
+    for j in range(len(omega_n)):
+        P = tf([0, omega_n[j]**2], [1, 2*zeta[i]*omega_n[j], omega_n[j]**2])
+        y, t = step(P, np.arange(0,5, 0.01))
+
+        pltargs = {'ls': next(LS)}
+        pltargs['label'] = '$\zeta$='+str(zeta[i])+', $\omega_n$='+str(omega_n[j])
+        ax.plot(t, y, **pltargs)
+
+plot_set(ax, 't', 'y', 'best')
+plt.show()
+
+# 伝達関数のステップ応答性
+Ps, t = step(tf([1, 3], [1, 3, 2]), np.arange(0, 5, 0.01))
+print(Ps)
+plt.plot(t, Ps, label="")
+plt.legend()
+plt.show()
+
+# 状態空間モデルの時間応答
+
+A = [[0, 1],
+     [-4, -5]]
+B = [[0],
+     [1]]
+C = np.eye(2)
+D = np.zeros([2, 1])
+P = ss(A, B, C, D)
+
+Td = np.arange(0, 5, 0.01)
+X0 = [-0.3, 0.4]
+
+x, t = initial(P, Td, X0)
+
+plt.plot(t, x[:, 0])
+plt.plot(t, x[:, 1])
+plt.show()
