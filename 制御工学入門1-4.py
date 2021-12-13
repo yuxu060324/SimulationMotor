@@ -308,3 +308,38 @@ if s.imag[0]==0 and s.imag[1]==0:
 ax.streamplot(X, Y, U, V, density=0.7, color='k')
 plot_set(ax, '$x_1$', '$x_2$')
 plt.show()
+
+# 1次遅れ系の周波数特性
+K = 1
+T = [1, 0.5, 0.1]
+
+LS = linestyle_generator()
+fig, ax = plt.subplots(2, 1)
+for i in range(len(T)):
+    P = tf([0, K], [T[i], 1])
+    gain, phase, w = bode(P, logspace(-2, 2))
+    pltargets = {'ls':next(LS), 'label': 'T='+str(T[i])}
+    ax[0].semilogx(w, 20*np.log(gain), **pltargets)
+    ax[1].semilogx(w, phase*180/np.pi, **pltargets)
+
+# bodeplot_set(ax, 3, 3)
+plt.show()
+
+# 2次遅れ系の周波数特性
+zeta = [1, 0.7, 0.4]
+omega_n = 1
+
+LS = linestyle_generator()
+fig, ax = plt.subplots(2, 1)
+for i in range(len(zeta)):
+    P = tf([0, omega_n**2], [1, 2*zeta[i]*omega_n, omega_n**2])
+    gain, phase, w = bode(P, logspace(-2, 2))
+
+    pltargs = {'ls':next(LS)}
+    pltargs['label'] = '$\zeta$='+str(zeta[i])
+    ax[0].semilogx(w, 20*np.log10(gain), **pltargs)
+    ax[1].semilogx(w, phase*180/np.pi, **pltargs)
+
+plt.show()
+
+
